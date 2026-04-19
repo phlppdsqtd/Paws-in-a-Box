@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 6059317314882108796}
   m_Layer: 0
   m_Name: AR_Cafe_Master
-  m_TagString: Untagged
+  m_TagString: Cafe
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

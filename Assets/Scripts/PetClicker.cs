@@ -7,9 +7,9 @@ public class PetClicker : MonoBehaviour
     // (or a finger taps) the Collider attached to this specific GameObject.
     private void OnMouseDown()
     {
-        Debug.Log("Pet clicked! Traveling to Pet Care...");
+        //Debug.Log("Pet clicked! Traveling to Pet Care...");
         
         // Load the Pet Care scene
-        SceneManager.LoadScene("Level2");
+        SceneManager.LoadScene("Level2", LoadSceneMode.Additive);
     }
 }

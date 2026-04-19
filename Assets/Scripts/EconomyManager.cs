@@ -5,7 +5,7 @@ using System;
 public class EconomyManager : MonoBehaviour
 {
     [Header("Economy Settings")]
-    public int currentCoins = 120; // Starting amount for brand new players
+    public int currentCoins = 120; 
     public TMP_Text coinUIText; 
 
     [Header("Offline Earnings Settings")]
@@ -13,20 +13,20 @@ public class EconomyManager : MonoBehaviour
     public GameObject welcomeBackPanel;
     public TMP_Text offlineCoinsText; 
 
+    // --- NEW: Keep track of coins waiting to be shown ---
+    private int pendingOfflineCoins = 0;
+
     void Start()
     {
-        // 1. LOAD COINS: Check if we have saved coins. If not, default to 120.
         currentCoins = PlayerPrefs.GetInt("SavedCoins", 120);
-        
         UpdateCoinUI();
         CalculateOfflineEarnings();
     }
 
-    // --- YOUR NORMAL ECONOMY LOGIC ---
     public void AddCoins(int amount)
     {
         currentCoins += amount;
-        SaveCoins(); // Save immediately after earning
+        SaveCoins(); 
         UpdateCoinUI();
     }
 
@@ -35,7 +35,7 @@ public class EconomyManager : MonoBehaviour
         if (currentCoins >= amount)
         {
             currentCoins -= amount;
-            SaveCoins(); // Save immediately after spending
+            SaveCoins(); 
             UpdateCoinUI();
             return true; 
         }
@@ -51,22 +51,18 @@ public class EconomyManager : MonoBehaviour
         if (coinUIText != null) coinUIText.text = "" + currentCoins;
     }
 
-    // --- SAVING LOGIC ---
     private void SaveCoins()
     {
-        // Save the current bank balance
         PlayerPrefs.SetInt("SavedCoins", currentCoins);
         PlayerPrefs.Save();
     }
 
     private void SaveCurrentTime()
     {
-        // Save the exact current date and time
         PlayerPrefs.SetString("LastPlayedTime", DateTime.Now.ToString());
         PlayerPrefs.Save(); 
     }
 
-    // --- OFFLINE MATH LOGIC ---
     private void CalculateOfflineEarnings()
     {
         if (PlayerPrefs.HasKey("LastPlayedTime"))
@@ -77,24 +73,31 @@ public class EconomyManager : MonoBehaviour
             if (DateTime.TryParse(savedTimeString, out lastPlayedTime))
             {
                 TimeSpan timeAway = DateTime.Now - lastPlayedTime;
-
                 int offlineCoinsEarned = Mathf.CeilToInt((float)timeAway.TotalMinutes * coinsPerMinute);
 
                 if (offlineCoinsEarned > 0)
                 {
-                    AddCoins(offlineCoinsEarned); // This will automatically trigger SaveCoins() now!
-                    
+                    // Add coins silently and set up the text, but DO NOT show the panel yet!
+                    AddCoins(offlineCoinsEarned); 
+                    pendingOfflineCoins = offlineCoinsEarned;
+
                     if (offlineCoinsText != null) 
                         offlineCoinsText.text = "" + offlineCoinsEarned;
-                    
-                    if (welcomeBackPanel != null) 
-                        welcomeBackPanel.SetActive(true);
                 }
             }
         }
     }
 
-    // --- APP STATE TRIGGERS ---
+    // --- NEW METHOD: Called by ARPlaceCafe once the cafe is placed ---
+    public void ShowPendingWelcomePanel()
+    {
+        if (pendingOfflineCoins > 0 && welcomeBackPanel != null)
+        {
+            welcomeBackPanel.SetActive(true);
+            pendingOfflineCoins = 0; // Reset it so it doesn't pop up again accidentally
+        }
+    }
+
     void OnApplicationPause(bool isPaused)
     {
         if (isPaused) SaveCurrentTime();

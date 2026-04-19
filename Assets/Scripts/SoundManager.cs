@@ -33,11 +33,13 @@ public class SoundManager : MonoBehaviour
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneUnloaded += OnSceneUnloaded; // <-- ADDED: Listen for scenes closing
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneUnloaded -= OnSceneUnloaded; // <-- ADDED: Stop listening when destroyed
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -57,6 +59,16 @@ public class SoundManager : MonoBehaviour
                 if (musicSource.isPlaying)
                     musicSource.Stop();
                 break;
+        }
+    }
+
+    // --- NEW METHOD: Handles returning to the AR Cafe ---
+    public void OnSceneUnloaded(Scene scene)
+    {
+        // If the scene we just closed was Level2, we know we are looking at Level1 again!
+        if (scene.name == "Level2")
+        {
+            PlayMusic(level1Music);
         }
     }
 

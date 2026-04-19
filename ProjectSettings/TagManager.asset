@@ -6,6 +6,7 @@ TagManager:
   tags:
   - ExitDoor
   - CafeTable
+  - Cafe
   layers:
   - Default
   - TransparentFX
