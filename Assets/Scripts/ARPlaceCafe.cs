@@ -7,6 +7,9 @@ using UnityEngine.XR.ARSubsystems;
 [RequireComponent(typeof(ARPlaneManager))] 
 public class ARPlaceCafe : MonoBehaviour
 {
+    // --- NEW: The Singleton instance ---
+    public static ARPlaceCafe Instance { get; private set; }
+
     [Header("Prefabs")]
     public GameObject cafePrefab;
     
@@ -34,6 +37,16 @@ public class ARPlaceCafe : MonoBehaviour
 
     void Awake()
     {
+        // --- NEW: Set up the Singleton ---
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         raycastManager = GetComponent<ARRaycastManager>();
         planeManager = GetComponent<ARPlaneManager>(); 
     }
@@ -141,4 +154,22 @@ public class ARPlaceCafe : MonoBehaviour
         if (coinsUI != null) coinsUI.SetActive(isVisible);
         if (shopButton != null) shopButton.SetActive(isVisible);
     }
+
+    // --- NEW: Helper methods to control the spawned cafe ---
+    public void PauseCafeSystems()
+    {
+        if (spawnedCafe != null)
+        {
+            spawnedCafe.SetActive(false); // Disables the whole prefab!
+        }
+    }
+
+    public void ResumeCafeSystems()
+    {
+        if (spawnedCafe != null)
+        {
+            spawnedCafe.SetActive(true); // Turns the prefab back on!
+        }
+    }
+    
 }

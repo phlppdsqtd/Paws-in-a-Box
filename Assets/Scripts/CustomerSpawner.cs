@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 public class CustomerSpawner : MonoBehaviour
 {
+    // Our tracker list for pausing/resuming customers
+    private List<GameObject> activeCustomerObjects = new List<GameObject>();
+    
     [Header("Spawn Settings")]
     public GameObject[] customerPrefabs; 
     public Transform spawnPoint; 
@@ -16,8 +19,8 @@ public class CustomerSpawner : MonoBehaviour
     private int lastSpawnedIndex = -1;
 
     [Header("Timer Settings")]
-    public float minSpawnTime = 5f;
-    public float maxSpawnTime = 10f; // Updated to 10
+    public float minSpawnTime = 3f;
+    public float maxSpawnTime = 7f;
     
     private float timer;
 
@@ -65,8 +68,11 @@ public class CustomerSpawner : MonoBehaviour
         // Pick a random allowed customer
         int randomIndex = availableIndices[Random.Range(0, availableIndices.Count)];
 
-        // CREATE THE CUSTOMER!
+        // CREATE THE CUSTOMER! (Safely unparented so NavMesh doesn't break)
         GameObject newCustomer = Instantiate(customerPrefabs[randomIndex], spawnPoint.position, spawnPoint.rotation);
+
+        // --- NEW: Add the new customer to our tracker list so we can pause them later ---
+        activeCustomerObjects.Add(newCustomer);
 
         // Update the guest list
         currentCustomers++;
@@ -91,5 +97,34 @@ public class CustomerSpawner : MonoBehaviour
     {
         currentCustomers--;
         activeCustomerIndices.Remove(prefabIndex);
+        
+        // --- NEW: Clean the tracker list to prevent memory bloat over time ---
+        activeCustomerObjects.RemoveAll(item => item == null);
+    }
+
+    // --- NEW: This runs automatically the exact moment the Cafe is paused via ARPlaceCafe ---
+    private void OnDisable()
+    {
+        // Clean out any destroyed customers first
+        activeCustomerObjects.RemoveAll(item => item == null);
+
+        foreach (GameObject customer in activeCustomerObjects)
+        {
+            // If the customer hasn't been destroyed yet, put them to sleep!
+            if (customer != null) customer.SetActive(false);
+        }
+    }
+
+    // --- NEW: This runs automatically the exact moment the Cafe is resumed via ARPlaceCafe ---
+    private void OnEnable()
+    {
+        // Clean out any destroyed customers first
+        activeCustomerObjects.RemoveAll(item => item == null);
+
+        foreach (GameObject customer in activeCustomerObjects)
+        {
+            // Wake the customer back up!
+            if (customer != null) customer.SetActive(true);
+        }
     }
 }

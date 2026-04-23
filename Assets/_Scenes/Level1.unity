@@ -1203,10 +1203,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 118174008}
     - target: {fileID: 2267683285454319668, guid: 48cb3fb68c91eb94999fd99957eb0cae, type: 3}
-      propertyPath: gridSize
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2267683285454319668, guid: 48cb3fb68c91eb94999fd99957eb0cae, type: 3}
       propertyPath: quitButton
       value: 
       objectReference: {fileID: 192716738}
@@ -1214,10 +1210,6 @@ PrefabInstance:
       propertyPath: shopButton
       value: 
       objectReference: {fileID: 626961583}
-    - target: {fileID: 2267683285454319668, guid: 48cb3fb68c91eb94999fd99957eb0cae, type: 3}
-      propertyPath: reticlePrefab
-      value: 
-      objectReference: {fileID: 8919750621104965424, guid: ea36e0860c0fff14983ffefe02a1b77c, type: 3}
     - target: {fileID: 2267683285454319668, guid: 48cb3fb68c91eb94999fd99957eb0cae, type: 3}
       propertyPath: economyManager
       value: 
@@ -1269,14 +1261,6 @@ PrefabInstance:
     - target: {fileID: 2512387470528047738, guid: 48cb3fb68c91eb94999fd99957eb0cae, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044770662070750173, guid: 48cb3fb68c91eb94999fd99957eb0cae, type: 3}
-      propertyPath: m_PlanePrefab
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044770662070750173, guid: 48cb3fb68c91eb94999fd99957eb0cae, type: 3}
-      propertyPath: m_DetectionMode
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5296,6 +5280,37 @@ MonoBehaviour:
   myPetIndex: 4
   myCost: 9000
   buttonText: {fileID: 1597560037}
+--- !u!1 &2051684808
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2051684809}
+  m_Layer: 0
+  m_Name: CafeActiveSystems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2051684809
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051684808}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 827.5, y: 471.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -5306,3 +5321,4 @@ SceneRoots:
   - {fileID: 278381425}
   - {fileID: 224718460}
   - {fileID: 813413772}
+  - {fileID: 2051684809}

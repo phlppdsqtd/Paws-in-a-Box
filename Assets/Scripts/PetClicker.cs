@@ -7,7 +7,11 @@ public class PetClicker : MonoBehaviour
     // (or a finger taps) the Collider attached to this specific GameObject.
     private void OnMouseDown()
     {
-        //Debug.Log("Pet clicked! Traveling to Pet Care...");
+        // --- NEW: Pause the 3D AR Cafe to save battery and performance ---
+        if (ARPlaceCafe.Instance != null)
+        {
+            ARPlaceCafe.Instance.PauseCafeSystems();
+        }
         
         // Load the Pet Care scene
         SceneManager.LoadScene("Level2", LoadSceneMode.Additive);

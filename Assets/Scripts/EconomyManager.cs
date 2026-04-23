@@ -16,6 +16,22 @@ public class EconomyManager : MonoBehaviour
     // --- NEW: Keep track of coins waiting to be shown ---
     private int pendingOfflineCoins = 0;
 
+    // --- NEW: The Singleton instance ---
+    public static EconomyManager Instance { get; private set; }
+
+    void Awake()
+    {
+        // Set up the Singleton
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject); // Prevent duplicates
+        }
+    }
+
     void Start()
     {
         currentCoins = PlayerPrefs.GetInt("SavedCoins", 120);

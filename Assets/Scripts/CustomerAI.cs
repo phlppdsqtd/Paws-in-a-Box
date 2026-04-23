@@ -28,11 +28,14 @@ public class CustomerAI : MonoBehaviour
     private Transform exitDoor;
     private TableData claimedTable; 
     
-    // --- NEW: Animator Reference ---
+    // --- Animator Reference ---
     private Animator customerAnimator;
 
     private CustomerSpawner mySpawner;
     private int myPrefabIndex;
+
+    // --- NEW: The Amnesia Fix Flag ---
+    private bool needsPathRestore = false;
 
     public void SetupSpawner(CustomerSpawner spawner, int index)
     {
@@ -81,9 +84,35 @@ public class CustomerAI : MonoBehaviour
         if (doorObj != null) exitDoor = doorObj.transform;
     }
 
+    // --- NEW: This runs automatically every time the customer wakes up from being paused ---
+    private void OnEnable()
+    {
+        needsPathRestore = true; 
+    }
+
     void Update()
     {
-        // --- NEW: Automatically sync animation with NavMeshAgent movement speed ---
+        // --- SAFETY SHIELD ---
+        // If the agent is paused, missing, or hasn't stuck to the floor yet, skip this ENTIRE frame!
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh) return;
+
+        // --- NEW: The Amnesia Fix ---
+        if (needsPathRestore)
+        {
+            needsPathRestore = false; // Turn the flag off so we only do this once per wake-up
+            
+            if (currentState == State.WalkingToTable && claimedTable != null)
+            {
+                agent.SetDestination(claimedTable.transform.position); // Remind them of the table!
+            }
+            else if (currentState == State.Leaving && exitDoor != null)
+            {
+                agent.SetDestination(exitDoor.position); // Remind them of the door!
+            }
+        }
+        // -----------------------------
+
+        // --- Automatically sync animation with NavMeshAgent movement speed ---
         if (customerAnimator != null)
         {
             // If the agent's velocity is greater than 0.1, it's moving!
@@ -98,12 +127,9 @@ public class CustomerAI : MonoBehaviour
             {
                 currentState = State.Sitting;
                 
-                // --- NEW: Randomly change direction when arriving at the table ---
-                // We pick a random angle between 0 and 360 degrees
+                // Randomly change direction when arriving at the table
                 float randomYAngle = Random.Range(0f, 360f);
-                // We apply it only to the Y axis (the axis used for turning left/right)
                 transform.rotation = Quaternion.Euler(0f, randomYAngle, 0f);
-                // -----------------------------------------------------------------
             }
         }
         else if (currentState == State.Sitting)
@@ -116,7 +142,7 @@ public class CustomerAI : MonoBehaviour
                 int payment = Random.Range(minPay, maxPay + 1); 
                 if (economyManager != null) economyManager.AddCoins(payment);
 
-                // --- NEW: Tell the UI Manager to pop up the text! ---
+                // Tell the UI Manager to pop up the text!
                 if (UIPopupManager.Instance != null)
                 {
                     UIPopupManager.Instance.ShowPayment(payment);
